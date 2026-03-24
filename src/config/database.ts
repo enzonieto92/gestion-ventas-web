@@ -385,3 +385,73 @@ export async function deletePromotionSale(id: number): Promise<boolean> {
 
   return true;
 }
+
+// USER AUTHENTICATION
+export interface User {
+  id: number;
+  username: string;
+  email?: string;
+  full_name?: string;
+  role: string;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+// Función simple de login (en producción usa bcrypt para hashear/verificar contraseñas)
+export async function loginUser(username: string, password: string): Promise<User | null> {
+  try {
+    // Para desarrollo/demo: comparación simple de contraseñas
+    // NOTA: En producción, las contraseñas deben estar hasheadas con bcrypt
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', username)
+      .eq('is_active', true)
+      .single();
+
+    if (error || !data) {
+      console.error('User not found or inactive:', error);
+      return null;
+    }
+
+    // Verificación simple de contraseña (solo para demo)
+    // En producción, usa: const isValidPassword = await bcrypt.compare(password, data.password_hash);
+    const isValidPassword = password === 'admin123' && username === 'admin' ||
+                           password === 'usuario123' && username === 'usuario';
+
+    if (!isValidPassword) {
+      console.error('Invalid password');
+      return null;
+    }
+
+    // Retornar usuario sin contraseña
+    const { password_hash, ...userWithoutPassword } = data;
+    return userWithoutPassword;
+  } catch (error) {
+    console.error('Login error:', error);
+    return null;
+  }
+}
+
+// Función para obtener usuario actual (útil para mantener sesión)
+export async function getCurrentUser(userId: number): Promise<User | null> {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, username, email, full_name, role, is_active, created_at, updated_at')
+      .eq('id', userId)
+      .eq('is_active', true)
+      .single();
+
+    if (error) {
+      console.error('Error getting current user:', error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Get current user error:', error);
+    return null;
+  }
+}

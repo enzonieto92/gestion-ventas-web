@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Plus, ShoppingCart, Package, Trash2, Edit2, DollarSign, Gift, TrendingUp, BarChart3 } from 'lucide-react';
+import { Plus, ShoppingCart, Package, Trash2, Edit2, DollarSign, Gift, TrendingUp, BarChart3, LogOut, User } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import { 
-  fetchProducts, 
-  addProduct as dbAddProduct, 
-  updateProduct as dbUpdateProduct, 
-  deleteProduct as dbDeleteProduct, 
-  fetchSales, 
+import {
+  fetchProducts,
+  addProduct as dbAddProduct,
+  updateProduct as dbUpdateProduct,
+  deleteProduct as dbDeleteProduct,
+  fetchSales,
   addSale as dbAddSale,
   deleteSale as dbDeleteSale,
   deletePromotionSale as dbDeletePromotionSale,
@@ -21,12 +21,18 @@ import {
   type Sale,
   type Promotion,
   type PromotionItem,
-  type PromotionSale
+  type PromotionSale,
+  type User
 } from '../config/database';
 import { useTheme } from '../hooks/useTheme';
 import { ThemeToggle } from '../components/ThemeToggle';
 
-export default function App() {
+interface AppProps {
+  user: User;
+  onLogout: () => void;
+}
+
+export default function App({ user, onLogout }: AppProps) {
   const { theme } = useTheme();
   const [products, setProducts] = useState<Product[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
@@ -412,7 +418,23 @@ export default function App() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
       <ThemeToggle />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl mb-6 sm:mb-8">Gestión de ventas</h1>
+        {/* Header with user info and logout */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl">Gestión de ventas</h1>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm sm:text-base">
+              <User className="w-4 h-4" />
+              <span className="text-gray-600 dark:text-gray-400">{user.username}</span>
+            </div>
+            <button
+              onClick={onLogout}
+              className="flex items-center gap-2 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm sm:text-base"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:inline">Cerrar sesión</span>
+            </button>
+          </div>
+        </div>
 
         {/* Error Message */}
         {error && (
