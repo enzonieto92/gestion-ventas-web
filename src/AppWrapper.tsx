@@ -33,6 +33,11 @@ export default function AppWrapper() {
     localStorage.removeItem('currentUser');
   };
 
+  const handleUserUpdated = (u: User) => {
+    setUser(u);
+    localStorage.setItem('currentUser', JSON.stringify(u));
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
@@ -48,5 +53,5 @@ export default function AppWrapper() {
     return <Login onLogin={handleLogin} />;
   }
 
-  return <App user={user} onLogout={handleLogout} />;
+  return <App user={user} onLogout={handleLogout} onUserUpdated={handleUserUpdated} />;
 }

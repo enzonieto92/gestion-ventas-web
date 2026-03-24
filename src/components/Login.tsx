@@ -130,17 +130,6 @@ export function Login({ onLogin }: LoginProps) {
               )}
             </button>
           </form>
-
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <p className="text-xs text-gray-600 dark:text-gray-400 mb-2 font-medium">
-              Credenciales de prueba:
-            </p>
-            <div className="text-xs text-gray-500 dark:text-gray-500 space-y-1">
-              <p><strong>Admin:</strong> admin / admin123</p>
-              <p><strong>Usuario:</strong> usuario / usuario123</p>
-            </div>
-          </div>
         </div>
 
         {/* Footer */}

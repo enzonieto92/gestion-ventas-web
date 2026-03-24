@@ -415,10 +415,13 @@ export async function loginUser(username: string, password: string): Promise<Use
       return null;
     }
 
-    // Verificación simple de contraseña (solo para demo)
-    // En producción, usa: const isValidPassword = await bcrypt.compare(password, data.password_hash);
-    const isValidPassword = password === 'admin123' && username === 'admin' ||
-                           password === 'usuario123' && username === 'usuario';
+    // Contraseña: coincide con password_hash en BD (demo almacena texto plano) o cuentas legacy.
+    const hash = data.password_hash as string | null | undefined;
+    const matchesStored = typeof hash === 'string' && hash.length > 0 && password === hash;
+    const legacyDemo =
+      (username === 'admin' && password === 'admin123') ||
+      (username === 'usuario' && password === 'usuario123');
+    const isValidPassword = matchesStored || legacyDemo;
 
     if (!isValidPassword) {
       console.error('Invalid password');
@@ -453,5 +456,147 @@ export async function getCurrentUser(userId: number): Promise<User | null> {
   } catch (error) {
     console.error('Get current user error:', error);
     return null;
+  }
+}
+
+export interface CreateUserInput {
+  username: string;
+  password: string;
+  email?: string;
+  full_name?: string;
+  role: 'admin' | 'user';
+}
+
+export interface UpdateUserInput {
+  username?: string;
+  email?: string | null;
+  full_name?: string | null;
+  role?: 'admin' | 'user';
+  is_active?: boolean;
+  /** Si se envía y no está vacía, reemplaza la contraseña en BD (demo: texto plano en password_hash). */
+  password?: string;
+}
+
+export async function fetchUsers(): Promise<User[]> {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, username, email, full_name, role, is_active, created_at, updated_at')
+      .order('username');
+
+    if (error) {
+      console.error('Error fetching users:', error);
+      return [];
+    }
+
+    return data ?? [];
+  } catch (error) {
+    console.error('fetchUsers error:', error);
+    return [];
+  }
+}
+
+export async function createUser(input: CreateUserInput): Promise<{ user: User | null; error: string | null }> {
+  try {
+    const username = input.username.trim();
+    if (!username || !input.password) {
+      return { user: null, error: 'Usuario y contraseña son obligatorios' };
+    }
+
+    const { data, error } = await supabase
+      .from('users')
+      .insert({
+        username,
+        password_hash: input.password,
+        email: input.email?.trim() || null,
+        full_name: input.full_name?.trim() || null,
+        role: input.role,
+        is_active: true,
+      })
+      .select('id, username, email, full_name, role, is_active, created_at, updated_at')
+      .single();
+
+    if (error) {
+      console.error('Error creating user:', error);
+      const msg =
+        error.code === '23505'
+          ? 'Ese nombre de usuario o email ya existe'
+          : error.message || 'No se pudo crear el usuario';
+      return { user: null, error: msg };
+    }
+
+    return { user: data, error: null };
+  } catch (error) {
+    console.error('createUser error:', error);
+    return { user: null, error: 'Error inesperado al crear usuario' };
+  }
+}
+
+export async function updateUser(
+  id: number,
+  updates: UpdateUserInput
+): Promise<{ user: User | null; error: string | null }> {
+  try {
+    const payload: Record<string, unknown> = {};
+
+    if (updates.username !== undefined) {
+      const u = updates.username.trim();
+      if (!u) return { user: null, error: 'El nombre de usuario no puede estar vacío' };
+      payload.username = u;
+    }
+    if (updates.email !== undefined) payload.email = updates.email === '' ? null : updates.email?.trim() ?? null;
+    if (updates.full_name !== undefined) {
+      payload.full_name = updates.full_name === '' ? null : updates.full_name?.trim() ?? null;
+    }
+    if (updates.role !== undefined) payload.role = updates.role;
+    if (updates.is_active !== undefined) payload.is_active = updates.is_active;
+    if (updates.password !== undefined && updates.password.length > 0) {
+      payload.password_hash = updates.password;
+    }
+
+    if (Object.keys(payload).length === 0) {
+      return { user: null, error: 'No hay cambios para guardar' };
+    }
+
+    const { data, error } = await supabase
+      .from('users')
+      .update(payload)
+      .eq('id', id)
+      .select('id, username, email, full_name, role, is_active, created_at, updated_at')
+      .single();
+
+    if (error) {
+      console.error('Error updating user:', error);
+      const msg =
+        error.code === '23505'
+          ? 'Ese nombre de usuario o email ya existe'
+          : error.message || 'No se pudo actualizar el usuario';
+      return { user: null, error: msg };
+    }
+
+    return { user: data, error: null };
+  } catch (error) {
+    console.error('updateUser error:', error);
+    return { user: null, error: 'Error inesperado al actualizar usuario' };
+  }
+}
+
+export async function deleteUser(id: number): Promise<{ ok: boolean; error: string | null }> {
+  try {
+    const { error } = await supabase.from('users').delete().eq('id', id);
+
+    if (error) {
+      console.error('Error deleting user:', error);
+      const msg =
+        error.code === '23503'
+          ? 'No se puede eliminar: hay datos que dependen de este usuario'
+          : error.message || 'No se pudo eliminar el usuario';
+      return { ok: false, error: msg };
+    }
+
+    return { ok: true, error: null };
+  } catch (error) {
+    console.error('deleteUser error:', error);
+    return { ok: false, error: 'Error inesperado al eliminar usuario' };
   }
 }

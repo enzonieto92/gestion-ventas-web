@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, ShoppingCart, Package, Trash2, Edit2, DollarSign, Gift, TrendingUp, BarChart3, LogOut, User as UserIcon } from 'lucide-react';
+import { Plus, ShoppingCart, Package, Trash2, Edit2, DollarSign, Gift, TrendingUp, BarChart3, LogOut, User as UserIcon, Users } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import {
   fetchProducts,
@@ -26,19 +26,21 @@ import {
 } from '../config/database';
 import { useTheme } from '../hooks/useTheme';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { UserManagement } from '../components/UserManagement';
 
 interface AppProps {
   user: UserModel;
   onLogout: () => void;
+  onUserUpdated?: (u: UserModel) => void;
 }
 
-export default function App({ user, onLogout }: AppProps) {
+export default function App({ user, onLogout, onUserUpdated }: AppProps) {
   const { theme } = useTheme();
   const [products, setProducts] = useState<Product[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [promotionSales, setPromotionSales] = useState<PromotionSale[]>([]);
-  const [activeTab, setActiveTab] = useState<'products' | 'promotions' | 'sales' | 'summary'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'promotions' | 'sales' | 'summary' | 'users'>('products');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -68,6 +70,12 @@ export default function App({ user, onLogout }: AppProps) {
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (user.role !== 'admin' && activeTab === 'users') {
+      setActiveTab('products');
+    }
+  }, [user.role, activeTab]);
 
   // Recalcular dashboard cuando cambien ventas o promociones
   useEffect(() => {
@@ -508,6 +516,20 @@ export default function App({ user, onLogout }: AppProps) {
                 <DollarSign size={16} className="sm:hidden" />
                 <span>Resumen</span>
               </button>
+              {user.role === 'admin' && (
+                <button
+                  onClick={() => setActiveTab('users')}
+                  className={`px-3 sm:px-6 py-3 flex items-center gap-1 sm:gap-2 transition-colors border-b-2 whitespace-nowrap text-sm sm:text-base ${
+                    activeTab === 'users'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                  }`}
+                >
+                  <Users size={18} className="hidden sm:block" />
+                  <Users size={16} className="sm:hidden" />
+                  <span>Usuarios</span>
+                </button>
+              )}
             </div>
 
             {/* Products Tab */}
@@ -1193,6 +1215,10 @@ export default function App({ user, onLogout }: AppProps) {
                   </div>
                 </div>
               </div>
+            )}
+
+            {activeTab === 'users' && user.role === 'admin' && (
+              <UserManagement currentUserId={user.id} onSessionUserUpdated={onUserUpdated} />
             )}
           </>
         )}
