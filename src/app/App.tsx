@@ -32,7 +32,7 @@ export default function App() {
   const [sales, setSales] = useState<Sale[]>([]);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [promotionSales, setPromotionSales] = useState<PromotionSale[]>([]);
-  const [activeTab, setActiveTab] = useState<'products' | 'sales' | 'promotions' | 'summary'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'promotions' | 'sales' | 'summary'>('products');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -411,8 +411,8 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
       <ThemeToggle />
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl mb-8">Sistema de Gestión</h1>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl mb-6 sm:mb-8">Gestión de ventas</h1>
 
         {/* Error Message */}
         {error && (
@@ -437,61 +437,65 @@ export default function App() {
         {!loading && !error && (
           <>
             {/* Tabs */}
-            <div className="flex gap-4 mb-8 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex gap-2 sm:gap-4 mb-8 border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
               <button
                 onClick={() => setActiveTab('products')}
-                className={`px-6 py-3 flex items-center gap-2 transition-colors border-b-2 ${
+                className={`px-3 sm:px-6 py-3 flex items-center gap-1 sm:gap-2 transition-colors border-b-2 whitespace-nowrap text-sm sm:text-base ${
                   activeTab === 'products'
                     ? 'border-blue-500 text-blue-600 dark:text-blue-400'
                     : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
                 }`}
               >
-                <Package size={20} />
-                Productos
-              </button>
-              <button
-                onClick={() => setActiveTab('sales')}
-                className={`px-6 py-3 flex items-center gap-2 transition-colors border-b-2 ${
-                  activeTab === 'sales'
-                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                }`}
-              >
-                <ShoppingCart size={20} />
-                Ventas
+                <Package size={18} className="hidden sm:block" />
+                <Package size={16} className="sm:hidden" />
+                <span>Productos</span>
               </button>
               <button
                 onClick={() => setActiveTab('promotions')}
-                className={`px-6 py-3 flex items-center gap-2 transition-colors border-b-2 ${
+                className={`px-3 sm:px-6 py-3 flex items-center gap-1 sm:gap-2 transition-colors border-b-2 whitespace-nowrap text-sm sm:text-base ${
                   activeTab === 'promotions'
                     ? 'border-blue-500 text-blue-600 dark:text-blue-400'
                     : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
                 }`}
               >
-                <Gift size={20} />
-                Promociones
+                <Gift size={18} className="hidden sm:block" />
+                <Gift size={16} className="sm:hidden" />
+                <span>Promos</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('sales')}
+                className={`px-3 sm:px-6 py-3 flex items-center gap-1 sm:gap-2 transition-colors border-b-2 whitespace-nowrap text-sm sm:text-base ${
+                  activeTab === 'sales'
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                }`}
+              >
+                <ShoppingCart size={18} className="hidden sm:block" />
+                <ShoppingCart size={16} className="sm:hidden" />
+                <span>Ventas</span>
               </button>
               <button
                 onClick={() => setActiveTab('summary')}
-                className={`px-6 py-3 flex items-center gap-2 transition-colors border-b-2 ${
+                className={`px-3 sm:px-6 py-3 flex items-center gap-1 sm:gap-2 transition-colors border-b-2 whitespace-nowrap text-sm sm:text-base ${
                   activeTab === 'summary'
                     ? 'border-blue-500 text-blue-600 dark:text-blue-400'
                     : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
                 }`}
               >
-                <DollarSign size={20} />
-                Resumen
+                <DollarSign size={18} className="hidden sm:block" />
+                <DollarSign size={16} className="sm:hidden" />
+                <span>Resumen</span>
               </button>
             </div>
 
             {/* Products Tab */}
             {activeTab === 'products' && (
               <div>
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-                  <h2 className="text-2xl mb-4">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 mb-6">
+                  <h2 className="text-xl sm:text-2xl mb-4">
                     {editingProduct ? 'Editar Producto' : 'Agregar Producto'}
                   </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
                     <input
                       type="text"
                       placeholder="Nombre del producto"
@@ -500,7 +504,7 @@ export default function App() {
                         ? setEditingProduct({ ...editingProduct, name: e.target.value })
                         : setNewProduct({ ...newProduct, name: e.target.value })
                       }
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                      className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:text-base"
                     />
                     <input
                       type="number"
@@ -511,7 +515,7 @@ export default function App() {
                         ? setEditingProduct({ ...editingProduct, price: parseFloat(e.target.value) })
                         : setNewProduct({ ...newProduct, price: e.target.value })
                       }
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                      className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:text-base"
                     />
                     <input
                       type="number"
@@ -522,7 +526,7 @@ export default function App() {
                         ? setEditingProduct({ ...editingProduct, cost: parseFloat(e.target.value) })
                         : setNewProduct({ ...newProduct, cost: e.target.value })
                       }
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                      className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:text-base"
                     />
                     <input
                       type="number"
@@ -532,21 +536,23 @@ export default function App() {
                         ? setEditingProduct({ ...editingProduct, stock: parseInt(e.target.value) })
                         : setNewProduct({ ...newProduct, stock: e.target.value })
                       }
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                      className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:text-base"
                     />
                     <button
                       onClick={editingProduct ? updateProduct : addProduct}
-                      className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                      className="bg-blue-500 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                     >
                       {editingProduct ? (
                         <>
                           <Edit2 size={18} />
-                          Actualizar
+                          <span className="hidden sm:inline">Actualizar</span>
+                          <span className="sm:hidden">Editar</span>
                         </>
                       ) : (
                         <>
                           <Plus size={18} />
-                          Agregar
+                          <span className="hidden sm:inline">Agregar</span>
+                          <span className="sm:hidden">Añadir</span>
                         </>
                       )}
                     </button>
@@ -554,33 +560,39 @@ export default function App() {
                   {editingProduct && (
                     <button
                       onClick={() => setEditingProduct(null)}
-                      className="mt-4 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                      className="mt-4 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 text-sm"
                     >
                       Cancelar edición
                     </button>
                   )}
                 </div>
 
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-                  <table className="w-full">
+                {/* Products Table - Responsive */}
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-x-auto">
+                  <table className="w-full text-sm sm:text-base">
                     <thead className="bg-gray-100 dark:bg-gray-700">
                       <tr>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Producto</th>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Costo</th>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Precio</th>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Margen (%)</th>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Stock</th>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Acciones</th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-gray-900 dark:text-gray-100 font-semibold">Producto</th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-gray-900 dark:text-gray-100 font-semibold hidden sm:table-cell">Costo</th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-gray-900 dark:text-gray-100 font-semibold hidden sm:table-cell">Precio</th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-gray-900 dark:text-gray-100 font-semibold hidden lg:table-cell">Margen (%)</th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-gray-900 dark:text-gray-100 font-semibold">Stock</th>
+                        <th className="px-3 sm:px-6 py-3 text-center text-gray-900 dark:text-gray-100 font-semibold">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
                       {products.map((product) => (
                         <tr key={product.id} className="border-t border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                          <td className="px-6 py-4 text-gray-900 dark:text-gray-100">{product.name}</td>
-                          <td className="px-6 py-4 text-gray-900 dark:text-gray-100">${product.cost.toFixed(2)}</td>
-                          <td className="px-6 py-4 text-gray-900 dark:text-gray-100">${product.price.toFixed(2)}</td>
-                          <td className="px-6 py-4">
-                            <span className={`font-semibold ${
+                          <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100">
+                            <div className="font-medium">{product.name}</div>
+                            <div className="text-xs sm:hidden text-gray-600 dark:text-gray-400">
+                              ${product.price.toFixed(2)} | Costo: ${product.cost.toFixed(2)}
+                            </div>
+                          </td>
+                          <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 hidden sm:table-cell">${product.cost.toFixed(2)}</td>
+                          <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 hidden sm:table-cell">${product.price.toFixed(2)}</td>
+                          <td className="px-3 sm:px-6 py-4 hidden lg:table-cell">
+                            <span className={`font-semibold text-sm ${
                               calculateMargin(product.price, product.cost) > 0 
                                 ? 'text-green-600 dark:text-green-400' 
                                 : 'text-red-600 dark:text-red-400'
@@ -588,146 +600,29 @@ export default function App() {
                               {calculateMargin(product.price, product.cost).toFixed(2)}%
                             </span>
                           </td>
-                          <td className="px-6 py-4">
-                            <span className={`${product.stock < 10 ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-gray-100'}`}>
+                          <td className="px-3 sm:px-6 py-4">
+                            <span className={`font-medium ${product.stock < 10 ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-gray-100'}`}>
                               {product.stock}
                             </span>
                           </td>
-                          <td className="px-6 py-4">
-                            <div className="flex gap-2">
+                          <td className="px-3 sm:px-6 py-4">
+                            <div className="flex gap-2 justify-center">
                               <button
                                 onClick={() => setEditingProduct(product)}
-                                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-1"
                               >
-                                <Edit2 size={18} />
+                                <Edit2 size={16} className="sm:w-18" />
                               </button>
                               <button
                                 onClick={() => deleteProduct(product.id)}
-                                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-1"
                               >
-                                <Trash2 size={18} />
+                                <Trash2 size={16} className="sm:w-18" />
                               </button>
                             </div>
                           </td>
                         </tr>
                       ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {/* Sales Tab */}
-            {activeTab === 'sales' && (
-              <div>
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-                  <h2 className="text-2xl mb-4">Registrar Venta</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <select
-                      value={saleForm.productId}
-                      onChange={(e) => setSaleForm({ ...saleForm, productId: e.target.value })}
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                    >
-                      <option value="" className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">Seleccionar producto</option>
-                      {products.map((product) => (
-                        <option key={product.id} value={product.id} className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                          {product.name} (Stock: {product.stock})
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      type="number"
-                      placeholder="Cantidad"
-                      value={saleForm.quantity}
-                      onChange={(e) => setSaleForm({ ...saleForm, quantity: e.target.value })}
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                    />
-                    <button
-                      onClick={registerSale}
-                      className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <ShoppingCart size={18} />
-                      Registrar Venta
-                    </button>
-                  </div>
-                </div>
-
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-                  <table className="w-full">
-                    <thead className="bg-gray-100 dark:bg-gray-700">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Fecha</th>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Tipo</th>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Descripción</th>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Cantidad</th>
-                        <th className="px-6 py-3 text-right text-gray-900 dark:text-gray-100">Ingresos</th>
-                        <th className="px-6 py-3 text-right text-gray-900 dark:text-gray-100">Ganancia</th>
-                        <th className="px-6 py-3 text-center text-gray-900 dark:text-gray-100">Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sales.length === 0 && promotionSales.length === 0 ? (
-                        <tr>
-                          <td colSpan={7} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
-                            No hay ventas registradas
-                          </td>
-                        </tr>
-                      ) : (
-                        <>
-                          {sales.map((sale) => {
-                            const profit = (Number(sale.total) || 0) - (Number(sale.cost) || 0);
-                            return (
-                              <tr key={`product-${sale.id}`} className="border-t border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td className="px-6 py-4 text-gray-900 dark:text-gray-100">{sale.date}</td>
-                                <td className="px-6 py-4">
-                                  <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded text-sm font-medium">
-                                    Producto
-                                  </span>
-                                </td>
-                                <td className="px-6 py-4 text-gray-900 dark:text-gray-100">{sale.product_name}</td>
-                                <td className="px-6 py-4 text-gray-900 dark:text-gray-100">{sale.quantity}</td>
-                                <td className="px-6 py-4 text-right text-gray-900 dark:text-gray-100">${(Number(sale.total) || 0).toFixed(2)}</td>
-                                <td className="px-6 py-4 text-right text-green-600 dark:text-green-400 font-semibold">${profit.toFixed(2)}</td>
-                                <td className="px-6 py-4 text-center">
-                                  <button
-                                    onClick={() => handleDeleteSale(sale.id)}
-                                    className="text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors"
-                                    title="Eliminar venta"
-                                  >
-                                    <Trash2 size={18} />
-                                  </button>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                          {promotionSales.map((sale) => {
-                            const profit = (Number(sale.total) || 0) - (Number(sale.cost) || 0);
-                            return (
-                              <tr key={`promo-${sale.id}`} className="border-t border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td className="px-6 py-4 text-gray-900 dark:text-gray-100">{sale.date}</td>
-                                <td className="px-6 py-4">
-                                  <span className="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded text-sm font-medium">
-                                    Promoción
-                                  </span>
-                                </td>
-                                <td className="px-6 py-4 text-gray-900 dark:text-gray-100">{sale.promotion_name}</td>
-                                <td className="px-6 py-4 text-gray-900 dark:text-gray-100">{sale.quantity}</td>
-                                <td className="px-6 py-4 text-right text-gray-900 dark:text-gray-100">${(Number(sale.total) || 0).toFixed(2)}</td>
-                                <td className="px-6 py-4 text-right text-green-600 dark:text-green-400 font-semibold">${profit.toFixed(2)}</td>
-                                <td className="px-6 py-4 text-center">
-                                  <button
-                                    onClick={() => handleDeletePromotionSale(sale.id)}
-                                    className="text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors"
-                                    title="Eliminar venta"
-                                  >
-                                    <Trash2 size={18} />
-                                  </button>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </>
-                      )}
                     </tbody>
                   </table>
                 </div>
@@ -738,14 +633,14 @@ export default function App() {
             {activeTab === 'promotions' && (
               <div>
                 {/* Promotions List */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden mb-6">
-                  <table className="w-full">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-x-auto mb-6">
+                  <table className="w-full text-sm sm:text-base">
                     <thead className="bg-gray-100 dark:bg-gray-700">
                       <tr>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Promoción</th>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Precio</th>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Productos</th>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Acciones</th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-gray-900 dark:text-gray-100 font-semibold">Promoción</th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-gray-900 dark:text-gray-100 font-semibold hidden sm:table-cell">Precio</th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-gray-900 dark:text-gray-100 font-semibold hidden md:table-cell">Productos</th>
+                        <th className="px-3 sm:px-6 py-3 text-center text-gray-900 dark:text-gray-100 font-semibold">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -755,15 +650,18 @@ export default function App() {
                           onClick={() => setPromotionSaleForm({ ...promotionSaleForm, promotionId: promotion.id.toString() })}
                           className="cursor-pointer border-t border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                         >
-                          <td className="px-6 py-4">
-                            <div className="text-gray-900 dark:text-gray-100 font-semibold">{promotion.name}</div>
+                          <td className="px-3 sm:px-6 py-4">
+                            <div className="text-gray-900 dark:text-gray-100 font-semibold text-sm sm:text-base">{promotion.name}</div>
                             {promotion.description && (
-                              <div className="text-sm text-gray-600 dark:text-gray-400">{promotion.description}</div>
+                              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">{promotion.description}</div>
                             )}
+                            <div className="text-xs sm:hidden text-gray-600 dark:text-gray-400 mt-1">
+                              ${promotion.price.toFixed(2)}
+                            </div>
                           </td>
-                          <td className="px-6 py-4 text-gray-900 dark:text-gray-100">${promotion.price.toFixed(2)}</td>
-                          <td className="px-6 py-4">
-                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                          <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 hidden sm:table-cell">${promotion.price.toFixed(2)}</td>
+                          <td className="px-3 sm:px-6 py-4 hidden md:table-cell">
+                            <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                               {promotion.items?.map((item, index) => (
                                 <div key={index}>
                                   {item.quantity}x {item.product?.name}
@@ -771,8 +669,8 @@ export default function App() {
                               ))}
                             </div>
                           </td>
-                          <td className="px-6 py-4">
-                            <div className="flex gap-2">
+                          <td className="px-3 sm:px-6 py-4">
+                            <div className="flex gap-2 justify-center">
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -784,18 +682,18 @@ export default function App() {
                                     })) || []
                                   );
                                 }}
-                                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-1"
                               >
-                                <Edit2 size={18} />
+                                <Edit2 size={16} className="sm:w-18" />
                               </button>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   deletePromotion(promotion.id);
                                 }}
-                                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-1"
                               >
-                                <Trash2 size={18} />
+                                <Trash2 size={16} className="sm:w-18" />
                               </button>
                             </div>
                           </td>
@@ -806,13 +704,13 @@ export default function App() {
                 </div>
 
                 {/* Create/Edit Promotion */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-                  <h2 className="text-2xl mb-4">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 mb-6">
+                  <h2 className="text-xl sm:text-2xl mb-4">
                     {editingPromotion ? 'Editar Promoción' : 'Crear Promoción'}
                   </h2>
                   
                   {/* Promotion Details */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
                     <input
                       type="text"
                       placeholder="Nombre de la promoción"
@@ -821,7 +719,7 @@ export default function App() {
                         ? setEditingPromotion({ ...editingPromotion, name: e.target.value })
                         : setNewPromotion({ ...newPromotion, name: e.target.value })
                       }
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                      className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:text-base"
                     />
                     <input
                       type="number"
@@ -832,7 +730,7 @@ export default function App() {
                         ? setEditingPromotion({ ...editingPromotion, price: parseFloat(e.target.value) })
                         : setNewPromotion({ ...newPromotion, price: e.target.value })
                       }
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                      className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:text-base"
                     />
                     <input
                       type="text"
@@ -842,11 +740,11 @@ export default function App() {
                         ? setEditingPromotion({ ...editingPromotion, description: e.target.value })
                         : setNewPromotion({ ...newPromotion, description: e.target.value })
                       }
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                      className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:text-base"
                     />
-                    <div className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700">
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Costo Total del Combo</p>
-                      <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <div className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700">
+                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1">Costo Total</p>
+                      <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
                         ${promotionItems.reduce((sum, item) => {
                           const product = products.find(p => p.id === parseInt(item.productId));
                           return sum + (product ? product.cost * parseInt(item.quantity || 0) : 0);
@@ -857,23 +755,24 @@ export default function App() {
 
                   {/* Promotion Items */}
                   <div className="mb-6">
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Productos en el combo</h3>
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">Productos en el combo</h3>
                       <button
                         onClick={addPromotionItem}
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        className="bg-blue-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                       >
                         <Plus size={16} />
-                        Agregar Producto
+                        <span className="hidden sm:inline">Agregar Producto</span>
+                        <span className="sm:hidden">Agregar</span>
                       </button>
                     </div>
                     
                     {promotionItems.map((item, index) => (
-                      <div key={index} className="flex gap-4 items-center mb-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <div key={index} className="flex flex-col sm:flex-row gap-3 sm:gap-2 items-center mb-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-sm sm:text-base">
                         <select
                           value={item.productId}
                           onChange={(e) => updatePromotionItem(index, 'productId', e.target.value)}
-                          className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
+                          className="w-full sm:flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 text-sm sm:text-base"
                         >
                           <option value="">Seleccionar producto</option>
                           {products.map((product) => (
@@ -888,32 +787,34 @@ export default function App() {
                           min="1"
                           value={item.quantity}
                           onChange={(e) => updatePromotionItem(index, 'quantity', e.target.value)}
-                          className="w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
+                          className="w-full sm:w-20 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 text-sm sm:text-base"
                         />
                         <button
                           onClick={() => removePromotionItem(index)}
-                          className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                          className="w-full sm:w-auto text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
                         >
-                          <Trash2 size={18} />
+                          <Trash2 size={18} className="mx-auto sm:ml-0" />
                         </button>
                       </div>
                     ))}
                   </div>
 
-                  <div className="flex gap-4">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                     <button
                       onClick={editingPromotion ? updatePromotion : addPromotion}
-                      className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
+                      className="bg-green-500 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                     >
                       {editingPromotion ? (
                         <>
                           <Edit2 size={18} />
-                          Actualizar
+                          <span className="hidden sm:inline">Actualizar</span>
+                          <span className="sm:hidden">Editar</span>
                         </>
                       ) : (
                         <>
                           <Plus size={18} />
-                          Crear Promoción
+                          <span className="hidden sm:inline">Crear Promoción</span>
+                          <span className="sm:hidden">Crear</span>
                         </>
                       )}
                     </button>
@@ -923,7 +824,7 @@ export default function App() {
                           setEditingPromotion(null);
                           setPromotionItems([]);
                         }}
-                        className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                        className="bg-gray-500 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors text-sm sm:text-base"
                       >
                         Cancelar
                       </button>
@@ -932,13 +833,13 @@ export default function App() {
                 </div>
 
                 {/* Sell Promotion */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-                  <h2 className="text-2xl mb-4">Vender Promoción</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 mb-6">
+                  <h2 className="text-xl sm:text-2xl mb-4">Vender Promoción</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                     <select
                       value={promotionSaleForm.promotionId}
                       onChange={(e) => setPromotionSaleForm({ ...promotionSaleForm, promotionId: e.target.value })}
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                      className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm sm:text-base"
                     >
                       <option value="">Seleccionar promoción</option>
                       {promotions.map((promotion) => (
@@ -953,35 +854,36 @@ export default function App() {
                       min="1"
                       value={promotionSaleForm.quantity}
                       onChange={(e) => setPromotionSaleForm({ ...promotionSaleForm, quantity: e.target.value })}
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                      className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:text-base"
                     />
                     <button
                       onClick={registerPromotionSale}
-                      className="bg-purple-500 text-white px-6 py-2 rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center gap-2"
+                      className="bg-purple-500 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                     >
                       <ShoppingCart size={18} />
-                      Vender Promoción
+                      <span className="hidden sm:inline">Vender Promoción</span>
+                      <span className="sm:hidden">Vender</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Promotion Sales History */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-                  <h3 className="text-xl p-6 pb-0 text-gray-900 dark:text-gray-100">Historial de Ventas de Promociones</h3>
-                  <table className="w-full">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-x-auto">
+                  <h3 className="text-lg sm:text-xl p-4 sm:p-6 pb-0 text-gray-900 dark:text-gray-100">Historial de Ventas de Promociones</h3>
+                  <table className="w-full text-sm sm:text-base">
                     <thead className="bg-gray-100 dark:bg-gray-700">
                       <tr>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Fecha</th>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Promoción</th>
-                        <th className="px-6 py-3 text-left text-gray-900 dark:text-gray-100">Cantidad</th>
-                        <th className="px-6 py-3 text-right text-gray-900 dark:text-gray-100">Ingresos</th>
-                        <th className="px-6 py-3 text-right text-gray-900 dark:text-gray-100">Ganancia</th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-gray-900 dark:text-gray-100 font-semibold">Fecha</th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-gray-900 dark:text-gray-100 font-semibold">Promoción</th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-gray-900 dark:text-gray-100 font-semibold">Cant.</th>
+                        <th className="px-3 sm:px-6 py-3 text-right text-gray-900 dark:text-gray-100 font-semibold hidden sm:table-cell">Ingresos</th>
+                        <th className="px-3 sm:px-6 py-3 text-right text-gray-900 dark:text-gray-100 font-semibold hidden md:table-cell">Ganancia</th>
                       </tr>
                     </thead>
                     <tbody>
                       {promotionSales.length === 0 ? (
                         <tr>
-                          <td colSpan={5} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                          <td colSpan={5} className="px-3 sm:px-6 py-8 text-center text-gray-500 dark:text-gray-400 text-sm">
                             No hay ventas de promociones
                           </td>
                         </tr>
@@ -990,14 +892,130 @@ export default function App() {
                           const profit = (Number(sale.total) || 0) - (Number(sale.cost) || 0);
                           return (
                             <tr key={sale.id} className="border-t border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                              <td className="px-6 py-4 text-gray-900 dark:text-gray-100">{sale.date}</td>
-                              <td className="px-6 py-4 text-gray-900 dark:text-gray-100">{sale.promotion_name}</td>
-                              <td className="px-6 py-4 text-gray-900 dark:text-gray-100">{sale.quantity}</td>
-                              <td className="px-6 py-4 text-right text-gray-900 dark:text-gray-100">${(Number(sale.total) || 0).toFixed(2)}</td>
-                              <td className="px-6 py-4 text-right text-green-600 dark:text-green-400 font-semibold">${profit.toFixed(2)}</td>
+                              <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 text-xs sm:text-sm">{sale.date}</td>
+                              <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 text-sm">{sale.promotion_name}</td>
+                              <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 font-medium">{sale.quantity}</td>
+                              <td className="px-3 sm:px-6 py-4 text-right text-gray-900 dark:text-gray-100 hidden sm:table-cell text-sm">${(Number(sale.total) || 0).toFixed(2)}</td>
+                              <td className="px-3 sm:px-6 py-4 text-right text-green-600 dark:text-green-400 font-semibold hidden md:table-cell text-sm">${profit.toFixed(2)}</td>
                             </tr>
                           );
                         })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Sales Tab */}
+            {activeTab === 'sales' && (
+              <div>
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 mb-6">
+                  <h2 className="text-xl sm:text-2xl mb-4">Registrar Venta</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                    <select
+                      value={saleForm.productId}
+                      onChange={(e) => setSaleForm({ ...saleForm, productId: e.target.value })}
+                      className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm sm:text-base"
+                    >
+                      <option value="">Seleccionar producto</option>
+                      {products.map((product) => (
+                        <option key={product.id} value={product.id}>
+                          {product.name} (Stock: {product.stock})
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      type="number"
+                      placeholder="Cantidad"
+                      value={saleForm.quantity}
+                      onChange={(e) => setSaleForm({ ...saleForm, quantity: e.target.value })}
+                      className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:text-base"
+                    />
+                    <button
+                      onClick={registerSale}
+                      className="bg-green-500 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+                    >
+                      <ShoppingCart size={18} />
+                      <span className="hidden sm:inline">Registrar Venta</span>
+                      <span className="sm:hidden">Vender</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-x-auto">
+                  <table className="w-full text-sm sm:text-base">
+                    <thead className="bg-gray-100 dark:bg-gray-700">
+                      <tr>
+                        <th className="px-3 sm:px-6 py-3 text-left text-gray-900 dark:text-gray-100 font-semibold">Fecha</th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-gray-900 dark:text-gray-100 font-semibold hidden sm:table-cell">Tipo</th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-gray-900 dark:text-gray-100 font-semibold">Descripción</th>
+                        <th className="px-3 sm:px-6 py-3 text-left text-gray-900 dark:text-gray-100 font-semibold">Cant.</th>
+                        <th className="px-3 sm:px-6 py-3 text-right text-gray-900 dark:text-gray-100 font-semibold hidden sm:table-cell">Ingresos</th>
+                        <th className="px-3 sm:px-6 py-3 text-right text-gray-900 dark:text-gray-100 font-semibold hidden md:table-cell">Ganancia</th>
+                        <th className="px-3 sm:px-6 py-3 text-center text-gray-900 dark:text-gray-100 font-semibold">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sales.length === 0 && promotionSales.length === 0 ? (
+                        <tr>
+                          <td colSpan={7} className="px-3 sm:px-6 py-8 text-center text-gray-500 dark:text-gray-400 text-sm">
+                            No hay ventas registradas
+                          </td>
+                        </tr>
+                      ) : (
+                        <>
+                          {sales.map((sale) => {
+                            const profit = (Number(sale.total) || 0) - (Number(sale.cost) || 0);
+                            return (
+                              <tr key={`product-${sale.id}`} className="border-t border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 text-xs sm:text-sm">{sale.date}</td>
+                                <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
+                                  <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded text-xs font-medium">
+                                    Producto
+                                  </span>
+                                </td>
+                                <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 text-sm">{sale.product_name}</td>
+                                <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 font-medium">{sale.quantity}</td>
+                                <td className="px-3 sm:px-6 py-4 text-right text-gray-900 dark:text-gray-100 hidden sm:table-cell text-sm">${(Number(sale.total) || 0).toFixed(2)}</td>
+                                <td className="px-3 sm:px-6 py-4 text-right text-green-600 dark:text-green-400 font-semibold hidden md:table-cell text-sm">${profit.toFixed(2)}</td>
+                                <td className="px-3 sm:px-6 py-4 text-center">
+                                  <button
+                                    onClick={() => handleDeleteSale(sale.id)}
+                                    className="text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors p-1"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                          {promotionSales.map((sale) => {
+                            const profit = (Number(sale.total) || 0) - (Number(sale.cost) || 0);
+                            return (
+                              <tr key={`promo-${sale.id}`} className="border-t border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 text-xs sm:text-sm">{sale.date}</td>
+                                <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
+                                  <span className="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded text-xs font-medium">
+                                    Promoción
+                                  </span>
+                                </td>
+                                <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 text-sm">{sale.promotion_name}</td>
+                                <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 font-medium">{sale.quantity}</td>
+                                <td className="px-3 sm:px-6 py-4 text-right text-gray-900 dark:text-gray-100 hidden sm:table-cell text-sm">${(Number(sale.total) || 0).toFixed(2)}</td>
+                                <td className="px-3 sm:px-6 py-4 text-right text-green-600 dark:text-green-400 font-semibold hidden md:table-cell text-sm">${profit.toFixed(2)}</td>
+                                <td className="px-3 sm:px-6 py-4 text-center">
+                                  <button
+                                    onClick={() => handleDeletePromotionSale(sale.id)}
+                                    className="text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors p-1"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </>
                       )}
                     </tbody>
                   </table>
@@ -1009,54 +1027,54 @@ export default function App() {
             {activeTab === 'summary' && (
               <div className="space-y-6">
                 {/* Key Metrics */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-gray-600 dark:text-gray-400">Total de Productos</h3>
-                      <Package className="text-blue-500" size={24} />
+                      <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Total de Productos</h3>
+                      <Package className="text-blue-500" size={20} />
                     </div>
-                    <p className="text-3xl text-gray-900 dark:text-gray-100">{totalProducts}</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{totalProducts}</p>
                   </div>
 
-                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-gray-600 dark:text-gray-400">Stock Total</h3>
-                      <Package className="text-orange-500" size={24} />
+                      <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Stock Total</h3>
+                      <Package className="text-orange-500" size={20} />
                     </div>
-                    <p className="text-3xl text-gray-900 dark:text-gray-100">{totalStock}</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">{totalStock}</p>
                   </div>
 
-                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-gray-600 dark:text-gray-400">Ganancia Total</h3>
-                      <TrendingUp className="text-green-500" size={24} />
+                      <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Ganancia Total</h3>
+                      <TrendingUp className="text-green-500" size={20} />
                     </div>
-                    <p className="text-3xl text-gray-900 dark:text-gray-100">${totalProfit.toFixed(2)}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{profitMargin.toFixed(1)}% margen</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">${totalProfit.toFixed(2)}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{profitMargin.toFixed(1)}% margen</p>
                   </div>
 
-                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-gray-600 dark:text-gray-400">Ingresos Totales</h3>
-                      <DollarSign className="text-green-500" size={24} />
+                      <h3 className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Ingresos Totales</h3>
+                      <DollarSign className="text-green-500" size={20} />
                     </div>
-                    <p className="text-3xl text-gray-900 dark:text-gray-100">${totalRevenue.toFixed(2)}</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100">${totalRevenue.toFixed(2)}</p>
                   </div>
                 </div>
 
                 {/* Charts */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   {/* Daily Revenue Chart */}
-                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                    <h3 className="text-xl mb-4 text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6">
+                    <h3 className="text-base sm:text-lg mb-4 text-gray-900 dark:text-gray-100 flex items-center gap-2">
                       <BarChart3 size={20} />
                       Ingresos Diarios
                     </h3>
-                    <ResponsiveContainer width="100%" height={300}>
+                    <ResponsiveContainer width="100%" height={250}>
                       <LineChart data={dailyStats}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
-                        <YAxis />
+                        <XAxis dataKey="date" fontSize={12} />
+                        <YAxis fontSize={12} />
                         <Tooltip formatter={(value) => [`$${value}`, 'Ingresos']} />
                         <Line type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={2} />
                       </LineChart>
@@ -1064,16 +1082,16 @@ export default function App() {
                   </div>
 
                   {/* Daily Profit Chart */}
-                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                    <h3 className="text-xl mb-4 text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6">
+                    <h3 className="text-base sm:text-lg mb-4 text-gray-900 dark:text-gray-100 flex items-center gap-2">
                       <TrendingUp size={20} />
                       Ganancias Diarias
                     </h3>
-                    <ResponsiveContainer width="100%" height={300}>
+                    <ResponsiveContainer width="100%" height={250}>
                       <LineChart data={dailyStats}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
-                        <YAxis />
+                        <XAxis dataKey="date" fontSize={12} />
+                        <YAxis fontSize={12} />
                         <Tooltip formatter={(value) => [`$${value}`, 'Ganancia']} />
                         <Line type="monotone" dataKey="profit" stroke="#3b82f6" strokeWidth={2} />
                       </LineChart>
@@ -1082,22 +1100,22 @@ export default function App() {
                 </div>
 
                 {/* Most Sold Products and Low Stock */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   {/* Most Sold Products */}
-                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                    <h3 className="text-xl mb-4 text-gray-900 dark:text-gray-100">Productos Más Vendidos</h3>
-                    <div className="space-y-3">
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6">
+                    <h3 className="text-base sm:text-lg mb-4 text-gray-900 dark:text-gray-100">Productos Más Vendidos</h3>
+                    <div className="space-y-2 sm:space-y-3">
                       {mostSoldProducts.length === 0 ? (
-                        <p className="text-gray-500 dark:text-gray-400">No hay datos de ventas</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">No hay datos de ventas</p>
                       ) : (
                         mostSoldProducts.map((product, index) => (
-                          <div key={product.name} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded">
-                            <div className="flex items-center gap-3">
-                              <span className="text-sm font-medium text-gray-500 dark:text-gray-400">#{index + 1}</span>
-                              <span className="text-gray-900 dark:text-gray-100">{product.name}</span>
+                          <div key={product.name} className="flex justify-between items-center p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 rounded text-sm sm:text-base">
+                            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                              <span className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 flex-shrink-0">#{index + 1}</span>
+                              <span className="text-gray-900 dark:text-gray-100 truncate">{product.name}</span>
                             </div>
-                            <div className="text-right">
-                              <p className="text-sm text-gray-900 dark:text-gray-100">{product.quantity} vendidos</p>
+                            <div className="text-right flex-shrink-0 ml-2">
+                              <p className="text-xs sm:text-sm text-gray-900 dark:text-gray-100">{product.quantity} vendidos</p>
                               <p className="text-xs text-gray-500 dark:text-gray-400">${product.revenue.toFixed(2)}</p>
                             </div>
                           </div>
@@ -1107,18 +1125,18 @@ export default function App() {
                   </div>
 
                   {/* Low Stock Alert */}
-                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                    <h3 className="text-xl mb-4 text-gray-900 dark:text-gray-100">Productos con Stock Bajo</h3>
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6">
+                    <h3 className="text-base sm:text-lg mb-4 text-gray-900 dark:text-gray-100">Productos con Stock Bajo</h3>
                     <div className="space-y-2">
                       {products.filter(p => p.stock < 10).length === 0 ? (
-                        <p className="text-gray-500 dark:text-gray-400">No hay productos con stock bajo</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">No hay productos con stock bajo</p>
                       ) : (
                         products
                           .filter(p => p.stock < 10)
                           .map(product => (
-                            <div key={product.id} className="flex justify-between items-center p-3 bg-red-50 dark:bg-red-900/20 rounded">
-                              <span className="text-gray-900 dark:text-gray-100">{product.name}</span>
-                              <span className="text-red-600 dark:text-red-400">Stock: {product.stock}</span>
+                            <div key={product.id} className="flex justify-between items-center p-2 sm:p-3 bg-red-50 dark:bg-red-900/20 rounded text-sm sm:text-base">
+                              <span className="text-gray-900 dark:text-gray-100 truncate">{product.name}</span>
+                              <span className="text-red-600 dark:text-red-400 font-medium flex-shrink-0 ml-2">Stock: {product.stock}</span>
                             </div>
                           ))
                       )}
@@ -1127,25 +1145,25 @@ export default function App() {
                 </div>
 
                 {/* Sales by Day Table */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                  <h3 className="text-xl mb-4 text-gray-900 dark:text-gray-100">Estadísticas Diarias</h3>
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6">
+                  <h3 className="text-base sm:text-lg mb-4 text-gray-900 dark:text-gray-100">Estadísticas Diarias</h3>
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table className="w-full text-xs sm:text-sm">
                       <thead>
                         <tr className="border-b dark:border-gray-700">
-                          <th className="text-left py-2 text-gray-900 dark:text-gray-100">Fecha</th>
-                          <th className="text-right py-2 text-gray-900 dark:text-gray-100">Ventas</th>
-                          <th className="text-right py-2 text-gray-900 dark:text-gray-100">Ingresos</th>
-                          <th className="text-right py-2 text-gray-900 dark:text-gray-100">Ganancia</th>
+                          <th className="text-left py-2 px-2 sm:px-3 text-gray-900 dark:text-gray-100 font-semibold">Fecha</th>
+                          <th className="text-right py-2 px-2 sm:px-3 text-gray-900 dark:text-gray-100 font-semibold">Ventas</th>
+                          <th className="text-right py-2 px-2 sm:px-3 text-gray-900 dark:text-gray-100 font-semibold">Ingresos</th>
+                          <th className="text-right py-2 px-2 sm:px-3 text-gray-900 dark:text-gray-100 font-semibold">Ganancia</th>
                         </tr>
                       </thead>
                       <tbody>
                         {dailyStats.slice(-7).reverse().map((day) => (
                           <tr key={day.date} className="border-b dark:border-gray-700">
-                            <td className="py-2 text-gray-900 dark:text-gray-100">{day.date}</td>
-                            <td className="py-2 text-right text-gray-900 dark:text-gray-100">{day.sales}</td>
-                            <td className="py-2 text-right text-gray-900 dark:text-gray-100">${day.revenue.toFixed(2)}</td>
-                            <td className="py-2 text-right text-gray-900 dark:text-gray-100">${day.profit.toFixed(2)}</td>
+                            <td className="py-2 px-2 sm:px-3 text-gray-900 dark:text-gray-100">{day.date}</td>
+                            <td className="py-2 px-2 sm:px-3 text-right text-gray-900 dark:text-gray-100">{day.sales}</td>
+                            <td className="py-2 px-2 sm:px-3 text-right text-gray-900 dark:text-gray-100">${day.revenue.toFixed(2)}</td>
+                            <td className="py-2 px-2 sm:px-3 text-right text-gray-900 dark:text-gray-100">${day.profit.toFixed(2)}</td>
                           </tr>
                         ))}
                       </tbody>
