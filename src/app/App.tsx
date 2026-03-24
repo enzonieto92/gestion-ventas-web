@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, ShoppingCart, Package, Trash2, Edit2, DollarSign, Gift, TrendingUp, BarChart3, LogOut, User } from 'lucide-react';
+import { Plus, ShoppingCart, Package, Trash2, Edit2, DollarSign, Gift, TrendingUp, BarChart3, LogOut, User as UserIcon } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import {
   fetchProducts,
@@ -22,13 +22,13 @@ import {
   type Promotion,
   type PromotionItem,
   type PromotionSale,
-  type User
+  type User as UserModel
 } from '../config/database';
 import { useTheme } from '../hooks/useTheme';
 import { ThemeToggle } from '../components/ThemeToggle';
 
 interface AppProps {
-  user: User;
+  user: UserModel;
   onLogout: () => void;
 }
 
@@ -423,7 +423,7 @@ export default function App({ user, onLogout }: AppProps) {
           <h1 className="text-2xl sm:text-3xl lg:text-4xl">Gestión de ventas</h1>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 text-sm sm:text-base">
-              <User className="w-4 h-4" />
+              <UserIcon className="w-4 h-4" />
               <span className="text-gray-600 dark:text-gray-400">{user.username}</span>
             </div>
             <button
