@@ -876,41 +876,6 @@ export default function App({ user, onLogout, onUserUpdated }: AppProps) {
                   </div>
                 </div>
 
-                {/* Sell Promotion */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 mb-6">
-                  <h2 className="text-xl sm:text-2xl mb-4">Vender Promoción</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-                    <select
-                      value={promotionSaleForm.promotionId}
-                      onChange={(e) => setPromotionSaleForm({ ...promotionSaleForm, promotionId: e.target.value })}
-                      className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm sm:text-base"
-                    >
-                      <option value="">Seleccionar promoción</option>
-                      {promotions.map((promotion) => (
-                        <option key={promotion.id} value={promotion.id}>
-                          {promotion.name} - ${promotion.price}
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      type="number"
-                      placeholder="Cantidad"
-                      min="1"
-                      value={promotionSaleForm.quantity}
-                      onChange={(e) => setPromotionSaleForm({ ...promotionSaleForm, quantity: e.target.value })}
-                      className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:text-base"
-                    />
-                    <button
-                      onClick={registerPromotionSale}
-                      className="bg-purple-500 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
-                    >
-                      <ShoppingCart size={18} />
-                      <span className="hidden sm:inline">Vender Promoción</span>
-                      <span className="sm:hidden">Vender</span>
-                    </button>
-                  </div>
-                </div>
-
                 {/* Promotion Sales History */}
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-x-auto">
                   <h3 className="text-lg sm:text-xl p-4 sm:p-6 pb-0 text-gray-900 dark:text-gray-100">Historial de Ventas de Promociones</h3>
@@ -982,6 +947,41 @@ export default function App({ user, onLogout, onUserUpdated }: AppProps) {
                     >
                       <ShoppingCart size={18} />
                       <span className="hidden sm:inline">Registrar Venta</span>
+                      <span className="sm:hidden">Vender</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Sell Promotion */}
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 sm:p-6 mb-6">
+                  <h2 className="text-xl sm:text-2xl mb-4">Vender Promoción</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                    <select
+                      value={promotionSaleForm.promotionId}
+                      onChange={(e) => setPromotionSaleForm({ ...promotionSaleForm, promotionId: e.target.value })}
+                      className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm sm:text-base"
+                    >
+                      <option value="">Seleccionar promoción</option>
+                      {promotions.map((promotion) => (
+                        <option key={promotion.id} value={promotion.id}>
+                          {promotion.name} - ${promotion.price}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      type="number"
+                      placeholder="Cantidad"
+                      min="1"
+                      value={promotionSaleForm.quantity}
+                      onChange={(e) => setPromotionSaleForm({ ...promotionSaleForm, quantity: e.target.value })}
+                      className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:text-base"
+                    />
+                    <button
+                      onClick={registerPromotionSale}
+                      className="bg-purple-500 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+                    >
+                      <ShoppingCart size={18} />
+                      <span className="hidden sm:inline">Vender Promoción</span>
                       <span className="sm:hidden">Vender</span>
                     </button>
                   </div>
