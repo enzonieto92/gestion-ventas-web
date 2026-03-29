@@ -417,8 +417,13 @@ export default function App({ user, onLogout, onUserUpdated }: AppProps) {
     setPromotionItems(promotionItems.filter((_, i) => i !== index));
   };
 
-  const totalRevenue = sales.reduce((sum, sale) => sum + sale.total, 0) + 
-                      promotionSales.reduce((sum, sale) => sum + sale.total, 0);
+  const totalRevenue =
+    sales.reduce((sum, sale) => {
+      return sum + (sale.total && !isNaN(sale.total) ? Number(sale.total) : 0);
+    }, 0) +
+    promotionSales.reduce((sum, sale) => {
+      return sum + (sale.total && !isNaN(sale.total) ? Number(sale.total) : 0);
+    }, 0);
   const totalProducts = products.length;
   const totalStock = products.reduce((sum, p) => sum + p.stock, 0);
 
