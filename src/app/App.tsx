@@ -49,6 +49,10 @@ export default function App({ user, onLogout, onUserUpdated }: AppProps) {
   const [mostSoldProducts, setMostSoldProducts] = useState<{ name: string; quantity: number; revenue: number }[]>([]);
   const [totalProfit, setTotalProfit] = useState(0);
   const [profitMargin, setProfitMargin] = useState(0);
+  const [dailyDetails, setDailyDetails] = useState<
+    Record<string, { productSales: Sale[]; promotionSales: PromotionSale[] }>
+  >({});
+  const [selectedDay, setSelectedDay] = useState<string | null>(null);
 
   // Form states
   const [newProduct, setNewProduct] = useState({ name: '', price: '', cost: '', stock: '' });
@@ -110,8 +114,29 @@ export default function App({ user, onLogout, onUserUpdated }: AppProps) {
   };
 
   const calculateDashboardData = (products: Product[], sales: Sale[], promotionSales: PromotionSale[], promotions: Promotion[]) => {
+    const getDayKey = (dateStr: string) => {
+      const s = (dateStr || '').trim();
+      if (!s) return '';
+      // ISO-like: 2026-03-25T01:23:45...
+      if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+      // es-ES toLocaleString: "25/3/2026, 01:23:45"
+      return s.split(',')[0].trim();
+    };
+
+    const toSortableDate = (dayKey: string) => {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dayKey)) return new Date(`${dayKey}T00:00:00`);
+      const m = dayKey.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (m) {
+        const [, dd, mm, yyyy] = m;
+        return new Date(Number(yyyy), Number(mm) - 1, Number(dd), 0, 0, 0, 0);
+      }
+      // Fallback: keep stable ordering
+      return new Date(dayKey);
+    };
+
     // Calculate daily stats
     const dailyMap = new Map<string, { revenue: number; profit: number; sales: number }>();
+    const detailsMap = new Map<string, { productSales: Sale[]; promotionSales: PromotionSale[] }>();
     
     // Process regular sales
     sales.forEach(sale => {
@@ -120,14 +145,21 @@ export default function App({ user, onLogout, onUserUpdated }: AppProps) {
       const revenue = Number(sale.total);
       const cost = Number(sale.cost) || 0;
       const profit = revenue - cost;
+      const dayKey = getDayKey(sale.date);
+      if (!dayKey) return;
       
-      if (!dailyMap.has(sale.date)) {
-        dailyMap.set(sale.date, { revenue: 0, profit: 0, sales: 0 });
+      if (!dailyMap.has(dayKey)) {
+        dailyMap.set(dayKey, { revenue: 0, profit: 0, sales: 0 });
       }
-      const day = dailyMap.get(sale.date)!;
+      const day = dailyMap.get(dayKey)!;
       day.revenue += revenue;
       day.profit += profit;
       day.sales += Number(sale.quantity);
+
+      if (!detailsMap.has(dayKey)) {
+        detailsMap.set(dayKey, { productSales: [], promotionSales: [] });
+      }
+      detailsMap.get(dayKey)!.productSales.push(sale);
     });
     
     // Process promotion sales
@@ -137,21 +169,30 @@ export default function App({ user, onLogout, onUserUpdated }: AppProps) {
       const revenue = Number(sale.total);
       const cost = sale.cost && !isNaN(sale.cost) ? Number(sale.cost) : 0;
       const profit = revenue - cost;
+      const dayKey = getDayKey(sale.date);
+      if (!dayKey) return;
       
-      if (!dailyMap.has(sale.date)) {
-        dailyMap.set(sale.date, { revenue: 0, profit: 0, sales: 0 });
+      if (!dailyMap.has(dayKey)) {
+        dailyMap.set(dayKey, { revenue: 0, profit: 0, sales: 0 });
       }
-      const day = dailyMap.get(sale.date)!;
+      const day = dailyMap.get(dayKey)!;
       day.revenue += revenue;
       day.profit += profit;
       day.sales += Number(sale.quantity);
+
+      if (!detailsMap.has(dayKey)) {
+        detailsMap.set(dayKey, { productSales: [], promotionSales: [] });
+      }
+      detailsMap.get(dayKey)!.promotionSales.push(sale);
     });
     
     const dailyStatsArray = Array.from(dailyMap.entries())
       .map(([date, data]) => ({ date, ...data }))
-      .sort((a, b) => a.date.localeCompare(b.date));
+      .sort((a, b) => toSortableDate(a.date).getTime() - toSortableDate(b.date).getTime());
     
     setDailyStats(dailyStatsArray);
+    setDailyDetails(Object.fromEntries(detailsMap.entries()));
+    setSelectedDay((prev) => (prev && detailsMap.has(prev) ? prev : null));
     
     // Calculate most sold products
     const productSalesMap = new Map<string, { quantity: number; revenue: number }>();
@@ -1204,6 +1245,7 @@ export default function App({ user, onLogout, onUserUpdated }: AppProps) {
                           <th className="text-right py-2 px-2 sm:px-3 text-gray-900 dark:text-gray-100 font-semibold">Ventas</th>
                           <th className="text-right py-2 px-2 sm:px-3 text-gray-900 dark:text-gray-100 font-semibold">Ingresos</th>
                           <th className="text-right py-2 px-2 sm:px-3 text-gray-900 dark:text-gray-100 font-semibold">Ganancia</th>
+                          <th className="text-right py-2 px-2 sm:px-3 text-gray-900 dark:text-gray-100 font-semibold">Detalle</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1213,11 +1255,107 @@ export default function App({ user, onLogout, onUserUpdated }: AppProps) {
                             <td className="py-2 px-2 sm:px-3 text-right text-gray-900 dark:text-gray-100">{day.sales}</td>
                             <td className="py-2 px-2 sm:px-3 text-right text-gray-900 dark:text-gray-100">${day.revenue.toFixed(2)}</td>
                             <td className="py-2 px-2 sm:px-3 text-right text-gray-900 dark:text-gray-100">${day.profit.toFixed(2)}</td>
+                            <td className="py-2 px-2 sm:px-3 text-right">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedDay(day.date)}
+                                className="text-blue-600 dark:text-blue-400 hover:underline"
+                              >
+                                Ver
+                              </button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
+
+                  {selectedDay && dailyDetails[selectedDay] && (
+                    <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-4">
+                      <div className="flex items-center justify-between gap-3 mb-3">
+                        <h4 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100">
+                          Detalle del día: {selectedDay}
+                        </h4>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedDay(null)}
+                          className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+                        >
+                          Cerrar
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div className="bg-gray-50 dark:bg-gray-700/40 rounded-lg p-3 sm:p-4">
+                          <h5 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                            Productos vendidos
+                          </h5>
+                          {dailyDetails[selectedDay].productSales.length === 0 ? (
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Sin ventas de productos.</p>
+                          ) : (
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-xs sm:text-sm">
+                                <thead>
+                                  <tr className="border-b border-gray-200 dark:border-gray-600">
+                                    <th className="text-left py-2 pr-2 text-gray-700 dark:text-gray-200">Hora</th>
+                                    <th className="text-left py-2 pr-2 text-gray-700 dark:text-gray-200">Producto</th>
+                                    <th className="text-right py-2 pl-2 text-gray-700 dark:text-gray-200">Cant.</th>
+                                    <th className="text-right py-2 pl-2 text-gray-700 dark:text-gray-200">Total</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {dailyDetails[selectedDay].productSales.map((s) => (
+                                    <tr key={`d-prod-${s.id}`} className="border-b border-gray-200/60 dark:border-gray-600/60">
+                                      <td className="py-2 pr-2 text-gray-900 dark:text-gray-100">{s.date}</td>
+                                      <td className="py-2 pr-2 text-gray-900 dark:text-gray-100">{s.product_name}</td>
+                                      <td className="py-2 pl-2 text-right text-gray-900 dark:text-gray-100">{s.quantity}</td>
+                                      <td className="py-2 pl-2 text-right text-gray-900 dark:text-gray-100">
+                                        ${Number(s.total || 0).toFixed(2)}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="bg-gray-50 dark:bg-gray-700/40 rounded-lg p-3 sm:p-4">
+                          <h5 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                            Promociones vendidas
+                          </h5>
+                          {dailyDetails[selectedDay].promotionSales.length === 0 ? (
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Sin ventas de promociones.</p>
+                          ) : (
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-xs sm:text-sm">
+                                <thead>
+                                  <tr className="border-b border-gray-200 dark:border-gray-600">
+                                    <th className="text-left py-2 pr-2 text-gray-700 dark:text-gray-200">Hora</th>
+                                    <th className="text-left py-2 pr-2 text-gray-700 dark:text-gray-200">Promoción</th>
+                                    <th className="text-right py-2 pl-2 text-gray-700 dark:text-gray-200">Cant.</th>
+                                    <th className="text-right py-2 pl-2 text-gray-700 dark:text-gray-200">Total</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {dailyDetails[selectedDay].promotionSales.map((s) => (
+                                    <tr key={`d-promo-${s.id}`} className="border-b border-gray-200/60 dark:border-gray-600/60">
+                                      <td className="py-2 pr-2 text-gray-900 dark:text-gray-100">{s.date}</td>
+                                      <td className="py-2 pr-2 text-gray-900 dark:text-gray-100">{s.promotion_name}</td>
+                                      <td className="py-2 pl-2 text-right text-gray-900 dark:text-gray-100">{s.quantity}</td>
+                                      <td className="py-2 pl-2 text-right text-gray-900 dark:text-gray-100">
+                                        ${Number(s.total || 0).toFixed(2)}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
