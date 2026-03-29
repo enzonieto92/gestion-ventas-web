@@ -1055,56 +1055,86 @@ export default function App({ user, onLogout, onUserUpdated }: AppProps) {
                         </tr>
                       ) : (
                         <>
-                          {sales.map((sale) => {
-                            const profit = (Number(sale.total) || 0) - (Number(sale.cost) || 0);
-                            return (
-                              <tr key={`product-${sale.id}`} className="border-t border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 text-xs sm:text-sm">{sale.date}</td>
-                                <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
-                                  <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded text-xs font-medium">
-                                    Producto
-                                  </span>
-                                </td>
-                                <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 text-sm">{sale.product_name}</td>
-                                <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 font-medium">{sale.quantity}</td>
-                                <td className="px-3 sm:px-6 py-4 text-right text-gray-900 dark:text-gray-100 hidden sm:table-cell text-sm">${(Number(sale.total) || 0).toFixed(2)}</td>
-                                <td className="px-3 sm:px-6 py-4 text-right text-green-600 dark:text-green-400 font-semibold hidden md:table-cell text-sm">${profit.toFixed(2)}</td>
-                                <td className="px-3 sm:px-6 py-4 text-center">
-                                  <button
-                                    onClick={() => handleDeleteSale(sale.id)}
-                                    className="text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors p-1"
-                                  >
-                                    <Trash2 size={16} />
-                                  </button>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                          {promotionSales.map((sale) => {
-                            const profit = (Number(sale.total) || 0) - (Number(sale.cost) || 0);
-                            return (
-                              <tr key={`promo-${sale.id}`} className="border-t border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 text-xs sm:text-sm">{sale.date}</td>
-                                <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
-                                  <span className="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded text-xs font-medium">
-                                    Promoción
-                                  </span>
-                                </td>
-                                <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 text-sm">{sale.promotion_name}</td>
-                                <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 font-medium">{sale.quantity}</td>
-                                <td className="px-3 sm:px-6 py-4 text-right text-gray-900 dark:text-gray-100 hidden sm:table-cell text-sm">${(Number(sale.total) || 0).toFixed(2)}</td>
-                                <td className="px-3 sm:px-6 py-4 text-right text-green-600 dark:text-green-400 font-semibold hidden md:table-cell text-sm">${profit.toFixed(2)}</td>
-                                <td className="px-3 sm:px-6 py-4 text-center">
-                                  <button
-                                    onClick={() => handleDeletePromotionSale(sale.id)}
-                                    className="text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors p-1"
-                                  >
-                                    <Trash2 size={16} />
-                                  </button>
-                                </td>
-                              </tr>
-                            );
-                          })}
+                          {(() => {
+                            const parseDateTime = (s: string) => {
+                              const str = (s || '').trim();
+                              if (!str) return 0;
+                              // "dd/mm/yyyy, HH:MM:SS" (es-ES)
+                              const m = str.match(
+                                /^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:,\s*(\d{1,2}):(\d{2})(?::(\d{2}))?)?/
+                              );
+                              if (m) {
+                                const [, dd, mm, yyyy, hh = '0', mi = '0', ss = '0'] = m;
+                                return new Date(
+                                  Number(yyyy),
+                                  Number(mm) - 1,
+                                  Number(dd),
+                                  Number(hh),
+                                  Number(mi),
+                                  Number(ss)
+                                ).getTime();
+                              }
+                              // ISO / fallback
+                              const t = new Date(str).getTime();
+                              return Number.isFinite(t) ? t : 0;
+                            };
+
+                            const rows = [
+                              ...sales.map((s) => ({ kind: 'product' as const, s, ts: parseDateTime(s.date) })),
+                              ...promotionSales.map((s) => ({ kind: 'promo' as const, s, ts: parseDateTime(s.date) })),
+                            ].sort((a, b) => b.ts - a.ts);
+
+                            return rows.map((row) => {
+                              const profit = (Number(row.s.total) || 0) - (Number((row.s as any).cost) || 0);
+                              const isProduct = row.kind === 'product';
+
+                              return (
+                                <tr
+                                  key={`${row.kind}-${row.s.id}`}
+                                  className="border-t border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+                                >
+                                  <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 text-xs sm:text-sm">
+                                    {row.s.date}
+                                  </td>
+                                  <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
+                                    {isProduct ? (
+                                      <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded text-xs font-medium">
+                                        Producto
+                                      </span>
+                                    ) : (
+                                      <span className="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded text-xs font-medium">
+                                        Promoción
+                                      </span>
+                                    )}
+                                  </td>
+                                  <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 text-sm">
+                                    {isProduct ? (row.s as any).product_name : (row.s as any).promotion_name}
+                                  </td>
+                                  <td className="px-3 sm:px-6 py-4 text-gray-900 dark:text-gray-100 font-medium">
+                                    {row.s.quantity}
+                                  </td>
+                                  <td className="px-3 sm:px-6 py-4 text-right text-gray-900 dark:text-gray-100 hidden sm:table-cell text-sm">
+                                    ${(Number(row.s.total) || 0).toFixed(2)}
+                                  </td>
+                                  <td className="px-3 sm:px-6 py-4 text-right text-green-600 dark:text-green-400 font-semibold hidden md:table-cell text-sm">
+                                    ${profit.toFixed(2)}
+                                  </td>
+                                  <td className="px-3 sm:px-6 py-4 text-center">
+                                    <button
+                                      onClick={() =>
+                                        isProduct
+                                          ? handleDeleteSale(row.s.id)
+                                          : handleDeletePromotionSale(row.s.id)
+                                      }
+                                      className="text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors p-1"
+                                    >
+                                      <Trash2 size={16} />
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            });
+                          })()}
                         </>
                       )}
                     </tbody>
