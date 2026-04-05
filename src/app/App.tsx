@@ -208,6 +208,57 @@ export default function App({ user, onLogout, onUserUpdated }: AppProps) {
       data.quantity += Number(sale.quantity);
       data.revenue += Number(sale.total);
     });
+
+    // Unidades vendidas dentro de promociones (por ítem del combo × cantidad de combos)
+    promotionSales.forEach((ps) => {
+      const promo = promotions.find((p) => p.id === ps.promotion_id);
+      if (!promo?.items?.length) return;
+
+      const bundleQty = Number(ps.quantity) || 0;
+      if (bundleQty <= 0) return;
+
+      const saleTotal = Number(ps.total) || 0;
+      const saleCost = Number(ps.cost) || 0;
+
+      const lineCosts = promo.items.map((item) => {
+        const product =
+          products.find((p) => p.id === item.product_id) ?? item.product;
+        if (!product) return 0;
+        const unitCost = Number(product.cost) || 0;
+        return unitCost * (Number(item.quantity) || 0) * bundleQty;
+      });
+      const sumLineCosts = lineCosts.reduce((a, b) => a + b, 0);
+
+      promo.items.forEach((item, idx) => {
+        const product =
+          products.find((p) => p.id === item.product_id) ?? item.product;
+        if (!product) return;
+
+        const name = product.name;
+        const lineUnits = (Number(item.quantity) || 0) * bundleQty;
+        if (lineUnits <= 0) return;
+
+        let lineRevenue = 0;
+        if (saleTotal > 0) {
+          if (sumLineCosts > 0) {
+            lineRevenue = saleTotal * (lineCosts[idx]! / sumLineCosts);
+          } else {
+            const totalUnits = promo.items.reduce(
+              (s, it) => s + (Number(it.quantity) || 0) * bundleQty,
+              0
+            );
+            lineRevenue = totalUnits > 0 ? saleTotal * (lineUnits / totalUnits) : 0;
+          }
+        }
+
+        if (!productSalesMap.has(name)) {
+          productSalesMap.set(name, { quantity: 0, revenue: 0 });
+        }
+        const row = productSalesMap.get(name)!;
+        row.quantity += lineUnits;
+        row.revenue += lineRevenue;
+      });
+    });
     
     const mostSoldArray = Array.from(productSalesMap.entries())
       .map(([name, data]) => ({ name, ...data }))
